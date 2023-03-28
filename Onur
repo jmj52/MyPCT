@@ -1,0 +1,16 @@
+### Onur Constraints Codes """
+
+from pymongo import MongoClient
+from bson import json_util
+
+client = MongoClient("mongodb+srv://onrtknr92:onurtekiner@cluster0.cgmpycw.mongodb.net/?retryWrites=true&w=majority")
+
+db = client.mypct
+
+collection=db["tracker"]
+collection
+
+db.tracker.find_one()
+
+###
+db.tracker.createIndex( { “User_Email” : 1 } , { unique : true } ) 
