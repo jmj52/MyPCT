@@ -1,17 +1,37 @@
 {
-    "_id"               : {"$oid": "64223e0a2529c24efa6f4706"},
-    "Content_Title"     : "This Is A Title",
+    "_id"               : {"$oid": "64223e0a2529c24efa6f4701"},
     "User_Name"         : "test_user",
     "User_Email"        : "test_mongodb@gmail.com",
     "User_Password"     : "test_password",
     "First_Name"        : "a_random_user_firstname",
     "Last_Name"         : "a_random_user_lastname",
-    "Form_of_Content"   : "movie",
-    "Release_Year"      : 2000,
-    "Release_Month"     : 1,
-    "Release_Day"       : 1,
-    "Rating"            : 5,
-    "Custom_Notes"      : "User may enter random notes here",
-    "User_Artwork"      : "TBD-should be an image not a string",
-    "Content_Links"     : "User Content Links Go Here" 
+    "Content"           : [
+      {
+        "Title"           : "This Is A Title",
+        "Release_Date"    : {
+            "$date": {
+              "$numberLong": "226108800000"
+            }
+        },
+        "Type"              : "Movie",
+        "Rating"            : 5,
+        "Genre"             : "Action",
+        "Notes"             : "User may enter random notes here",
+        "Artwork"           : "TBD-should be an image not a string",
+        "Links"             : "User Content Links Go Here" 
+      },{
+      "Title"           : "This Is A Title2",
+      "Release_Date"    : {
+          "$date": {
+            "$numberLong": "226108800000"
+          }
+      },
+      "Type"              : "Movie",
+      "Rating"            : 5,
+      "Genre"             : "Action",
+      "Notes"             : "User may enter random notes here",
+      "Artwork"           : "TBD-should be an image not a string",
+      "Links"             : "User Content Links Go Here" 
+      }
+    ]
   }
