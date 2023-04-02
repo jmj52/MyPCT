@@ -93,3 +93,156 @@ if __name__ == '__main__':
 ##### Kenzie Lee (Mackenzie Peddle) #####
 
 db = client.mypct
+
+## Inserting Users
+## Creating Users with No Content
+
+# user = {
+#         'User_Name' : "MollySmith",
+#         'User_Email' : "mollys@gmail.com",
+#         'User_Password' : 'password',
+#         'First_Name'    : 'Molly',
+#         'Last_Name'     : 'Smith'
+#     }
+
+# result=db.tracker.insert_one(user)
+# print(result)
+
+# users = [{
+#         'User_Name' : "GumGum",
+#         'User_Email' : "Luffy@gmail.com",
+#         'User_Password' : 'password',
+#         'First_Name'    : 'MonkeyD',
+#         'Last_Name'     : 'Luffy'
+#     },
+#     {
+#         'User_Name' : "Zoro",
+#         'User_Email' : "Zoro@gmail.com",
+#         'User_Password' : 'password',
+#         'First_Name'    : 'Roronoa',
+#         'Last_Name'     : 'Zoro'
+#     },
+#     {
+#         'User_Name' : "Chopper",
+#         'User_Email' : "Chopper@gmail.com",
+#         'User_Password' : 'password',
+#         'First_Name'    : 'TonyTony',
+#         'Last_Name'     : 'Chopper'
+#     }
+#     ]
+
+# result=db.tracker.insert_many(users)
+# print(result)
+
+## Creating Users with Content
+
+# users = [
+#  {
+#     "User_Name"         : "Jane Austen",
+#     "User_Email"        : "JaneAusten@gmail.com",
+#     "User_Password"     : "test_password",
+#     "First_Name"        : "Jane",
+#     "Last_Name"         : "Austen",
+#     "Content"           : [
+#       {
+#         "Title"           : "Pride and Prejudice",
+#         "Release_Date"    : {
+#             "$date": {
+#               "$numberLong": "20150201T000000-0500"
+#             }
+#         },
+#         "Type"              : "Book",
+#         "Rating"            : 9,
+#         "Genre"             : "Classic",
+#         "Notes"             : "Mr. Darcy yes",
+#         "Artwork"           : "TBD-should be an image not a string",
+#         "Links"             : "User Content Links Go Here" 
+#       },{
+#       "Title"           : "Emma",
+#       "Release_Date"    : {
+#           "$date": {
+#             "$numberLong": "20101110T000000-0500"
+#           }
+#       },
+#       "Type"              : "Book",
+#       "Rating"            : 10,
+#       "Genre"             : "Classic",
+#       "Notes"             : "Queen",
+#       "Artwork"           : "TBD-should be an image not a string",
+#       "Links"             : "User Content Links Go Here" 
+#       }
+#     ]
+#   },
+# {
+#     "User_Name"         : "Emma",
+#     "User_Email"        : "EmmaWatson@gmail.com",
+#     "User_Password"     : "test_password",
+#     "First_Name"        : "Emma",
+#     "Last_Name"         : "Watson",
+#     "Content"           : [
+#       {
+#         "Title"           : "Little Women",
+#         "Release_Date"    : {
+#             "$date": {
+#               "$numberLong": "20051205T000000-0500"
+#             }
+#         },
+#         "Type"              : "Book",
+#         "Rating"            : 9,
+#         "Genre"             : "Classic",
+#         "Notes"             : "amazing",
+#         "Artwork"           : "TBD-should be an image not a string",
+#         "Links"             : "User Content Links Go Here" 
+#       }
+#     ]
+#   }
+# ]
+
+# x = db.tracker.insert_many(users)
+
+# #print list of the _id values of the inserted documents:
+# print(x.inserted_ids)
+
+## Adding New Content
+## no content exists so has to be an array
+
+# newValues = {'$set': {'Content':[{'Title': 'Legally Blonde', 'Type':'Movie', 'Rating':10}]}}
+# result = db.tracker.update_one({'User_Name' : 'MollySmith'}, newValues)
+
+## Adding Additional Content 
+## There is content that exists, so does not an array
+
+# newValues = {'$push':{'Content':{'Title': 'Avatar' , 'Type':'Movie', 'Rating':8}}}
+# result = db.tracker.update_one({'User_Name' : 'MollySmith'}, newValues)
+# newValues = {'$push':{'Content':{'Title': 'Megan' , 'Type':'Movie', 'Rating':2}}}
+# result = db.tracker.update_one({'User_Name' : 'MollySmith'}, newValues)
+# newValues = {'$push':{'Content':{'Title': 'Babylon' , 'Type':'Movie', 'Rating':5}}}
+# result = db.tracker.update_one({'User_Name' : 'MollySmith'}, newValues)
+# newValues = {'$push':{'Content':{'Title': 'Puss and Boots' , 'Type':'Movie', 'Rating':9}}}
+# result = db.tracker.update_one({'User_Name' : 'MollySmith'}, newValues)
+# newValues = {'$push':{'Content':{'Title': 'NYCVlog' , 'Type':'Youtube', 'Rating':8}}}
+# result = db.tracker.update_one({'User_Name' : 'MollySmith'}, newValues)
+# newValues = {'$push':{'Content':{'Title': 'FashionVlog' , 'Type':'Youtube', 'Rating':7}}}
+# result = db.tracker.update_one({'User_Name' : 'MollySmith'}, newValues)
+# newValues = {'$push':{'Content':{'Title': 'Pachinko' , 'Type':'Book', 'Rating':10}}}
+# result = db.tracker.update_one({'User_Name' : 'MollySmith'}, newValues)
+# newValues = {'$push':{'Content':{'Title': 'East of Eden' , 'Type':'Book', 'Rating':10}}}
+# result = db.tracker.update_one({'User_Name' : 'MollySmith'}, newValues)
+# newValues = {'$push':{'Content':{'Title': 'Breaking Bad' , 'Type':'TV', 'Rating':9}}}
+# result = db.tracker.update_one({'User_Name' : 'MollySmith'}, newValues)
+# newValues = {'$push':{'Content':{'Title': 'Family Guy' , 'Type':'TV', 'Rating':5}}}
+# result = db.tracker.update_one({'User_Name' : 'MollySmith'}, newValues)
+# newValues = {'$push':{'Content':{'Title': 'Community' , 'Type':'TV', 'Rating':6}}}
+# result = db.tracker.update_one({'User_Name' : 'MollySmith'}, newValues)
+
+## Querying
+from bson import json_util
+
+## List All Contents of a User
+result = db.tracker.find({"User_Name": "MollySmith"}, 
+                         {"_id": 0, "User_Name": 0, "User_Email":0,"User_Password":0, "First_Name":0, "Last_Name":0})
+print(json_util.dumps(result, indent=2))
+
+## List all Ratings of a User
+result = db.tracker.find({"User_Name": "MollySmith"}, {"Content.Rating"})
+print(json_util.dumps(result, indent=2))
