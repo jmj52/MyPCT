@@ -246,3 +246,59 @@ print(json_util.dumps(result, indent=2))
 ## List all Ratings of a User
 result = db.tracker.find({"User_Name": "MollySmith"}, {"Content.Rating"})
 print(json_util.dumps(result, indent=2))
+
+
+
+#### ONUR TEKINER ####
+
+pip install pymongo  
+from pymongo import MongoClient
+from bson import json_util
+
+client = MongoClient("mongodb+srv://onrtknr92:onurtekiner@cluster0.cgmpycw.mongodb.net/?retryWrites=true&w=majority")
+
+mypct = client.get_database("mypct")
+
+type(mypct)
+
+tracker=mypct["tracker"]
+
+tracker
+
+result=mypct.tracker.find().limit(1)
+\
+for x in result:
+    print(x)
+
+#Unique and null constraints for User_name and User_email
+mypct.create_collection("test", {
+  "validator" : {
+    "$jsonSchema": {
+      "bsonType": "object",
+      "required": ["User_email", "User_name"],
+      "properties" : {
+        "User_email": {
+          "bsonType": "string",
+          "description": "must be a unique string and is required"
+        },
+        "User_name": {
+          "bsonType": "string",
+          "description": "must be a unique string and is required"
+        }
+      },
+      "uniqueItems": ["User_email", "User_name"]
+    }
+  }
+})
+
+
+#Null Constraints for password
+
+mypct.create_collection("test", {"validator": {"$jsonSchema": {
+    "bsonType": "object",
+      "required": ["User_password"],
+      "properties": {
+        "User_password": {
+          "bsonType": "string",
+          "description": "must be a string and is required"}}}}})
+ 
