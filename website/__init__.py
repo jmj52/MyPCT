@@ -1,14 +1,19 @@
 from flask import Flask
 from flask_pymongo import PyMongo
-import certifi
+import certifi as cert
 
-mongo = PyMongo()
+from website.extensions import mongo
 
 def create_app():
+
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = 'asdf'
-    app.config["MONGO_URI"] = "mongodb+srv://kenzie:kenziekenzie@cluster0.cgmpycw.mongodb.net/test"
-    mongo.init_app(app, tlsCAFile=certifi.where())
+    #app.config['SECRET_KEY'] = 'asdf'
+    
+    tlsCAFile = cert.where()
+    app.config['MONGO_URI'] = f'mongodb+srv://joshua:joshuajoshua@cluster0.cgmpycw.mongodb.net/test?retryWrites=true&w=majority&ssl=true&tlsCAFile={tlsCAFile}'
+    #app.config["MONGO_URI"] = "mongodb+srv://kenzie:kenziekenzie@cluster0.cgmpycw.mongodb.net/test"
+    #mongo.init_app(app, tlsCAFile=certifi.where())
+    mongo.init_app(app)
 
     from .views import views
     from .auth import auth
