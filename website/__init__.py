@@ -1,8 +1,8 @@
 from flask import Flask
 from flask_pymongo import PyMongo
 import certifi as cert
-#from website.extensions import mongo
-mongo = PyMongo()
+from website.extensions import mongo
+# mongo = PyMongo()
 
 def create_app():
 
