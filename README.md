@@ -4,21 +4,23 @@ My Personal Content Tracker (MyPCT) -testing
 
 Planned Changes
 
+High Priority / Required
 
-- Login (Kenzie) 
-- Signup (Kenzie)
+Week 14
+- Add navigation bar - Joshua
+    - Log out
+    - Home/Content
+    - About
+- Connect user home page to edit content page - Onur/Joshua
+- Connect user login to home page - Kenzie/Onur
+- Find a way to maintain user session across pages - Kenzie
 
-- Home/Content 
-    Onur
-    - Access/Read various parts of content and display correctly on home page using text fields some read button
-    
-    Joshua
-    - Write various parts of content to the database using user forms/text fields and submit buttons
+Week 15
+- Sorting / Filtering of content
+- Add consistent theme / ui styling
+- User input validation
+- Dialog for invalid user input (module called Flash)
 
-
-- About
-- Add Navigation bar to show at every page
-- Unified design language/Styling
-
-Ideas
-- bootstrap?
+Low Priority / Nice to have 
+- Super user or admin capable of viewing all content 
+- Images Upload/Download, displaying, storing in database
