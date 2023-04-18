@@ -11,12 +11,14 @@ def get_user_docs(a_collection, a_username):
 
 views = Blueprint('views',__name__)
 
+
 @views.route('/')
 def home():
     mypct_cln = mongo.cx.mypct.tracker
     contents = mypct_cln.find()
     print(contents)
     return render_template('index.html',contents=contents)
+
 
 @views.route('/add_content', methods=['POST'])
 def add_content():
@@ -34,6 +36,7 @@ def add_content():
 
     #mypct_cln.insert_one({'text': content_item})
     return redirect(url_for('views.home'))
+
 
 @views.route('/edit_content', methods=['GET', 'POST'])
 def edit_content():
@@ -110,11 +113,13 @@ def cancel_changes():
     print(f'\ncancel_changes\n')
     return redirect(url_for('views.home'))
 
+
 # TODO: Add delete content functionality
 @views.route('/delete_content')
 def delete_content():
     print(f'\ndelete_content\n')
     return redirect(url_for('views.home'))
+
 
 @views.route('/delete_completed', methods=['POST'])
 def delete_completed():
@@ -122,9 +127,11 @@ def delete_completed():
     mypct_cln.delete_many({'complete' : True})
     return redirect(url_for('views.home'))
 
+
 @views.route('/delete_all', methods=['POST'])
 def delete_all():
     pass
+
 
 @views.route('/complete_content/<oid>')
 def complete_content(oid):
@@ -141,3 +148,13 @@ def complete_content(oid):
     #mypct_cln.update_one(content_item)
     return redirect(url_for('views.home'))
 
+
+@views.route('/about')
+def about():
+    print(f'\nabout\n')
+    return render_template('about.html')
+
+@views.route('/logout')
+def logout():
+    print(f'\nlogout\n')
+    return render_template('logout.html')
