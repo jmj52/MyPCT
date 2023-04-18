@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, session, redirect, url_for
 from website import mongo
-from werkzeug.security import generate_password_hash, check_password_hash
+# from werkzeug.security import generate_password_hash, check_password_hash
+from website.extensions import mongo
 
 auth = Blueprint('auth',__name__)
 
