@@ -58,12 +58,9 @@
 
 					<ul class="list-group t20">
 						{% for content in contents %}
-						<a href="{{ url_for('views.complete_content', oid=content._id )}}">
-							<!--<li class="list-group-item {% if content.complete %}content-completed{% endif %}">-->
-							<li class="list-group-item">
-								{{ content.User_Name }}
-							</li>
-						</a>
+							{% for val in content.Content %}
+								<li class="list-group-item">{{ val }}</li>
+							{% endfor %}
 						{% endfor %}
 					</ul>
 				</div>

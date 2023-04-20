@@ -13,6 +13,7 @@ def login():
         if existing_user is None:
             print("No Account Exists")
             return render_template('signup.html')
+        session['user_email'] = email
         return redirect(url_for('views.home'))
     return render_template("login.html")
 

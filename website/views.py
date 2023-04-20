@@ -2,6 +2,13 @@ from flask import Blueprint, render_template, redirect, url_for, request
 from bson.objectid import ObjectId
 import pandas as pd
 from website.extensions import mongo
+from jinja2 import Environment
+from flask import session
+
+def len_filter(value):
+    return len(value)
+
+>>>>>>> Stashed changes
 
 
 # Returns all records for a given username
@@ -13,8 +20,19 @@ views = Blueprint('views',__name__)
 
 @views.route('/')
 def home():
+    user_email = session.get('user_email')
+    if user_email is None:
+        return redirect(url_for('auth.login'))
+
     mypct_cln = mongo.cx.mypct.tracker
-    contents = mypct_cln.find()
+    contents = mypct_cln.find({"User_Email": user_email}, {"_id": 0, "Content": 1})
+    
+    return render_template('index.html', contents=contents)
+
+##@views.route('/')
+##def home():
+    mypct_cln = mongo.cx.mypct.tracker
+    contents = mypct_cln.find( { "User_Email": "JaneAusten@gmail.com" },{ "_id":0, "Content":1})
     return render_template('index.html',contents=contents)
 
 @views.route('/add_content', methods=['POST'])
@@ -60,3 +78,11 @@ def complete_content(oid):
     mypct_cln.update_one(filter=query,update=change)
     #mypct_cln.update_one(content_item)
     return redirect(url_for('views.home'))
+
+
+
+
+
+
+
+
