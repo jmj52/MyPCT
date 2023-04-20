@@ -1,2 +1,4 @@
-website/__pycache__
+*.pyc
+./website/__pycache__/*
+.venv/*
 env/*
