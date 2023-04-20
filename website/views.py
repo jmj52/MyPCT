@@ -5,12 +5,6 @@ from website.extensions import mongo
 from jinja2 import Environment
 from flask import session
 
-def len_filter(value):
-    return len(value)
-
->>>>>>> Stashed changes
-
-
 # Returns all records for a given username
 def get_user_docs(a_collection, a_username):
     query = a_collection.find({'User_Name':a_username})
@@ -21,7 +15,7 @@ views = Blueprint('views',__name__)
 
 @views.route('/')
 def home():
-    user_email = session.get('user_email')
+    user_email = session.get('User_Email')
     if user_email is None:
         return redirect(url_for('auth.login'))
 
@@ -171,8 +165,3 @@ def complete_content(oid):
 def about():
     print(f'\nabout\n')
     return render_template('about.html')
-
-@views.route('/logout')
-def logout():
-    print(f'\nlogout\n')
-    return render_template('logout.html')
