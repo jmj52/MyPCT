@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request
+from flask import Blueprint, render_template, redirect, url_for, request, session
 from bson.objectid import ObjectId
 import pandas as pd
 from website.extensions import mongo
@@ -12,7 +12,6 @@ def get_user_docs(a_collection, a_username):
 
 views = Blueprint('views',__name__)
 
-
 @views.route('/')
 def home():
     user_email = session.get('User_Email')
@@ -20,16 +19,22 @@ def home():
         return redirect(url_for('auth.login'))
 
     mypct_cln = mongo.cx.mypct.tracker
-    contents = mypct_cln.find({"User_Email": user_email}, {"_id": 0, "Content": 1})
+    contents = mypct_cln.find({"User_Email": user_email})#, {"_id": 0, "Content": 1})
     
     return render_template('index.html', contents=contents)
 
 ##@views.route('/')
 ##def home():
     mypct_cln = mongo.cx.mypct.tracker
-    contents = mypct_cln.find()
+    username = session.get('username')
+    #contents = mypct_cln.find({"User_Email": username})
+    result = mypct_cln.find({"User_Email": username}, 
+                         {"_id": 0, "Content":1})
+    contents = json_util.dumps(result, indent=2)
     print(contents)
-    return render_template('index.html',contents=contents)
+    return render_template('index.html', contents=contents)
+    
+
 
 
 @views.route('/add_content', methods=['POST'])
@@ -48,7 +53,6 @@ def add_content():
 
     #mypct_cln.insert_one({'text': content_item})
     return redirect(url_for('views.home'))
-
 
 @views.route('/edit_content', methods=['GET', 'POST'])
 def edit_content():
@@ -125,13 +129,11 @@ def cancel_changes():
     print(f'\ncancel_changes\n')
     return redirect(url_for('views.home'))
 
-
 # TODO: Add delete content functionality
 @views.route('/delete_content')
 def delete_content():
     print(f'\ndelete_content\n')
     return redirect(url_for('views.home'))
-
 
 @views.route('/delete_completed', methods=['POST'])
 def delete_completed():
@@ -139,11 +141,9 @@ def delete_completed():
     mypct_cln.delete_many({'complete' : True})
     return redirect(url_for('views.home'))
 
-
 @views.route('/delete_all', methods=['POST'])
 def delete_all():
     pass
-
 
 @views.route('/complete_content/<oid>')
 def complete_content(oid):
@@ -165,3 +165,5 @@ def complete_content(oid):
 def about():
     print(f'\nabout\n')
     return render_template('about.html')
+
+

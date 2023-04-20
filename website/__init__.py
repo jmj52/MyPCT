@@ -11,6 +11,7 @@ def create_app():
     app.config['SECRET_KEY'] = 'asdf'
 
     app.config['MONGO_URI'] = f'mongodb+srv://joshua:joshuajoshua@cluster0.cgmpycw.mongodb.net/test?retryWrites=true&w=majority&ssl=true&tlsCAFile={tlsCAFile}'
+    app.config['SECRET_KEY']= 'akabfa'
     #app.config["MONGO_URI"] = "mongodb+srv://kenzie:kenziekenzie@cluster0.cgmpycw.mongodb.net/test"
     mongo.init_app(app)
 

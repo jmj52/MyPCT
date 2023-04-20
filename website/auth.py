@@ -5,6 +5,7 @@ from website.extensions import mongo
 
 auth = Blueprint('auth',__name__)
 
+
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -27,7 +28,8 @@ def login():
 @auth.route('/logout')
 def logout():
     session.pop('User_Email', None)
-    return render_template('login.html')
+    return redirect(url_for('auth.login'))
+    # return render_template('login.html')
 
 @auth.route('/signup', methods=['GET', 'POST'])
 def signup():

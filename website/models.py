@@ -1,4 +1,3 @@
-from . import db
 
 class Content(db.Model):
     id = db.Column(db.Integer, primary_key=True)
