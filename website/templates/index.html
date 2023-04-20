@@ -21,18 +21,6 @@
 				<div class="col-lg-4 col-lg-offset-4" id="content">
 					<h2>User Content</h2>
 					
-					<form action="{{ url_for('views.add_content') }}" method="POST" role="form">
-					
-						<div class="form-group">
-							<div class="input-group">
-								<input name="add-content" type="text" class="form-control" placeholder="Enter content for tracking" aria-label="Content" aria-describedby="add-btn">
-								<span class="input-group-btn">
-									<button type="submit" class="btn btn-default" id="add-btn">ADD</button>
-								</span>
-							</div>
-						</div>
-					</form>
-
 					<form action="{{ url_for('views.edit_content') }}" role="form">
 					
 						<div class="form-group">
