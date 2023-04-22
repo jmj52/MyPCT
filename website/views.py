@@ -19,46 +19,35 @@ def home():
         return redirect(url_for('auth.login'))
 
     mypct_cln = mongo.cx.mypct.tracker
-    contents = mypct_cln.find({"User_Email": user_email})#, {"_id": 0, "Content": 1})
+    contents = mypct_cln.find({"User_Email": user_email}, {"_id": 0, "Content": 1})
     
-    return render_template('index.html', contents=contents)
-
-##@views.route('/')
-##def home():
-    mypct_cln = mongo.cx.mypct.tracker
-    username = session.get('username')
-    #contents = mypct_cln.find({"User_Email": username})
-    result = mypct_cln.find({"User_Email": username}, 
-                         {"_id": 0, "Content":1})
-    contents = json_util.dumps(result, indent=2)
     print(contents)
     return render_template('index.html', contents=contents)
     
 
-
-
-@views.route('/add_content', methods=['POST'])
+@views.route('/add_content', methods=['GET', 'POST'])
 def add_content():
+    print(f'\nadd_content:{request.method}\n')
     mypct_cln = mongo.cx.mypct.tracker
 
     content_item = request.form.get('add-content')
     
     print(f'\nadd-content:{content_item}')
-    # query = get_user_docs(mypct_cln,'test_user')
-    # print(query.head())
-    # current_content_title = 'Title Updated via Flask-add'
-    # query = {'User_Name':'test_user'}
-    # change = {'$push':{'Content':{'Title': current_content_title}}}
-    # mypct_cln.update_one(filter=query,update=change)
 
-    #mypct_cln.insert_one({'text': content_item})
-    return redirect(url_for('views.home'))
+    # POST runs when user selects Save Changes
+    if request.method == 'POST':
+        content_item = request.form.getlist('add-content')
+        print('content-passed:',content_item)
+
+        #mypct_cln.insert_one({'text': content_item})
+
+    empty_dict = {'Title:':' ','Release_Date':' ','Type':' ','Rating':' ','Genre':' ','Notes':' ','Links':' '}
+    return render_template('edit_content.html',content_selected = empty_dict, op = 'Add')
 
 @views.route('/edit_content', methods=['GET', 'POST'])
 def edit_content():
     print(f'\nedit_content:{request.method}\n')
     mypct_cln = mongo.cx.mypct.tracker
-
 
     # Onur Provide Index or Title of Content Item
     selection_idx = 0
@@ -121,9 +110,51 @@ def edit_content():
         
 
     # show the form, it wasn't submitted
-    return render_template('edit_content.html',content_selected = user_content_data_sel)
+    return render_template('edit_content.html',content_selected = user_content_data_sel, op = 'Edit')
 
+@views.route('/sort_content')
+def sort_content():
+    print(f'\nsort_content\n')
+    user_email = session.get('User_Email')
+    if user_email is None:
+        return redirect(url_for('auth.login'))
 
+    mypct_cln = mongo.cx.mypct.tracker
+    contents = mypct_cln.find({"User_Email": user_email}, {"_id": 0, "Content": 1})
+    
+
+    # Display sorted content
+    sorting_methods = ['Unsorted','Rating','Title']
+    sort_method = session.get('Sort_Method')
+    sort_method_idx = sorting_methods.index(sort_method)
+
+    #print('sort_method:',sort_method)
+
+    # Sort content if sort method is not default/unsorted value
+    if sort_method != 'Unsorted':
+        content_frame = pd.DataFrame.from_records(contents.__copy__())['Content'][0]
+        if sort_method == 'Rating':
+            contents = sorted(content_frame, key=lambda d: d.get(sort_method, 0), reverse=True)
+        elif sort_method == 'Title':
+            contents = sorted(content_frame, key=lambda d: d.get(sort_method, 'zzzzzz'))
+        else:
+            # Default case - should not be encountered
+            pass
+
+        sort_method_str = ' by ' + sort_method
+    else:
+        sort_method_str = ''
+
+    # Toggle sort method
+    if sort_method_idx < len(sorting_methods)-1:
+        sort_method_idx += 1
+    else:
+        sort_method_idx = 0
+
+    session['Sort_Method'] = sorting_methods[sort_method_idx]
+    return render_template('index.html', contents=contents, method=sort_method_str)
+    
+    
 @views.route('/cancel_changes')
 def cancel_changes():
     print(f'\ncancel_changes\n')

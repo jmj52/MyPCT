@@ -16,6 +16,7 @@ def login():
             # if check_password_hash(user['User_Password'], password):
             if user['User_Password'] == password:
                 session['User_Email'] = email
+                session['Sort_Method'] = 'Unsorted'
                 return redirect(url_for('views.home'))
             else:
                 print('Incorrect password, try again.')
@@ -45,6 +46,7 @@ def signup():
             #hashed = generate_password_hash(password, method='sha256')
             mongo.cx.mypct.tracker.insert_one({'First_Name': firstName, 'Last_Name': lastName, 'User_Email': email, 'User_Password': password})
             session['User_Email'] = email
+            session['Sort_Method'] = 'Unsorted'
             return redirect(url_for('views.home'))
         
         return 'That email already exists!'

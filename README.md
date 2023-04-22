@@ -8,6 +8,30 @@ Planned Changes before video
 - Sorting and/or filtering - Joshua
 
 
+Video Outline: Individual video sections combine tomorrow
+
+
+Submit all code changes by tonight
+Record videos tomorrow morning - midday
+Submit to Onur by 3 pm
+
+Meet at 7 pm to watch video
+
+- Kenzie (90 sec) (Slides)
+    - Overview section and slides 
+    - Talk through login and signup 
+
+- Onur (90 sec) (Stick video together)
+    - Talk through user content page and what types of data are supported 
+    - Sort (Title, Type) ()
+
+- Josh (90 sec) (Code?)
+    - Talk through add, edit, delete operations 
+    - Perform an example
+
+
+
+
 High Priority / Required
 
 Week 14
