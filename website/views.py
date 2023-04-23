@@ -44,19 +44,29 @@ def add_content():
     empty_dict = {'Title:':' ','Release_Date':' ','Type':' ','Rating':' ','Genre':' ','Notes':' ','Links':' '}
     return render_template('edit_content.html',content_selected = empty_dict, op = 'Add')
 
+
+@views.route('/sel_content/<content_index>')
+def sel_content(content_index):
+    print(f'\nsel_content\n')
+    session['user_selection'] = content_index
+    return redirect(url_for('views.edit_content'))
+
 @views.route('/edit_content', methods=['GET', 'POST'])
 def edit_content():
     print(f'\nedit_content:{request.method}\n')
     mypct_cln = mongo.cx.mypct.tracker
-
-    # Onur Provide Index or Title of Content Item
-    selection_idx = 0
     
-    # Kenzie to provide user_name or _id
-    current_user_id = "64223e0a2529c24efa6f4701"
-    query = {'_id':ObjectId(current_user_id)}
+    # Get current content selected
+    content_index = session.get('user_selection')
+    selection_idx = int(content_index)-1
+    print('selection_idx:',selection_idx)
+    
+    # Get current User_Email selected
+    user_email = session.get('User_Email')
+    print(user_email)
+    query = {'User_Email':user_email}
     record = mypct_cln.find(query)
-    
+
     # Get content from data retrieved
     df = pd.DataFrame.from_records(record)
     user_content_data = df['Content'][0]
