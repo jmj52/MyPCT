@@ -5,11 +5,6 @@ from website.extensions import mongo
 from jinja2 import Environment
 from flask import session
 
-# Returns all records for a given username
-def get_user_docs(a_collection, a_username):
-    query = a_collection.find({'User_Name':a_username})
-    return pd.DataFrame.from_records(query)
-
 views = Blueprint('views',__name__)
 
 @views.route('/')
@@ -78,6 +73,7 @@ def sel_content(content_index):
     session['user_selection'] = content_index
     return redirect(url_for('views.edit_content'))
 
+
 @views.route('/edit_content', methods=['GET', 'POST'])
 def edit_content():
     print(f'\nedit_content:{request.method}\n')
@@ -107,11 +103,20 @@ def edit_content():
     remove_key = 'Artwork'
     if remove_key in user_content_data_sel: user_content_data_sel.pop(remove_key)
 
+    # Translate raw data into standard template
+    user_content_dict = {}
+    for i,field in enumerate(supported_fields):
+        if user_content_data_sel.get(field): 
+            user_content_dict[field] = user_content_data_sel.get(field)
+        else:
+            user_content_dict[field] = ''
+
     # POST runs when user selects Save Changes
     if request.method == 'POST':
         content_item = request.form.getlist('edit-content')
         print('content-passed:',content_item)
         print('user_content_data_sel',user_content_data_sel)
+        print('user_content_dict: ',user_content_dict)
 
         # Assume Content Is Not Valid until we can validate the user input
         # Override to true for now, no validation criteria setup
@@ -121,19 +126,16 @@ def edit_content():
 
         # Content Is Not Valid, return to edit page with original content
         if not(content_valid):
-            return render_template('edit_content.html',content_selected = user_content_data_sel)
+            return render_template('edit_content.html',content_selected = user_content_dict)
 
         # Content Is Valid, update database and return to content page
         else:
-            fields = list(user_content_data_sel.keys())
-            print(len(fields))
 
             # Check to see if saved changes are different than existing content
             keys_to_update = {}
-
-            keys = list(user_content_data_sel.keys())
-            for i in range(0,len(user_content_data_sel)):
-                existing_value  = list(user_content_data_sel.values())[i]
+            keys = list(user_content_dict.keys())
+            for i in range(0,len(user_content_dict)):
+                existing_value  = list(user_content_dict.values())[i]
                 new_value       = content_item[i]
                 if new_value != '' and existing_value != new_value:
                     print('change detected for',keys[i])
@@ -141,7 +143,7 @@ def edit_content():
                 else:
                     keys_to_update.update({keys[i]:existing_value})
 
-            #print('keys_to_update:', keys_to_update)
+            print('keys_to_update:', keys_to_update)
 
             # Build empty frame and add only non-empty fields 
             changes = ['']*num_supported_fields
@@ -150,19 +152,17 @@ def edit_content():
                 if keys_to_update.get(k):
                     changes[i] = keys_to_update[k]
 
-            #print(changes)
-
             # Update Database           
             query = {'User_Email':user_email,'Content.Title':current_content_title}
             
             change = {'$set':
-                      {'Content.$.Title':           changes[0],
-                       'Content.$.Release_Date':    changes[1],       
-                       'Content.$.Type':            changes[2],
-                       'Content.$.Rating':          changes[3],
-                       'Content.$.Genre':           changes[4],
-                       'Content.$.Notes':           changes[5],      
-                       'Content.$.Links':           changes[6],       
+                      {'Content.$.Title':           changes[0],      # String
+                       'Content.$.Release_Date':    changes[1],      # Date       
+                       'Content.$.Type':            changes[2],      # String
+                       'Content.$.Rating':          int(changes[3]), # Int32
+                       'Content.$.Genre':           changes[4],      # String
+                       'Content.$.Notes':           changes[5],      # String
+                       'Content.$.Links':           changes[6],      # String       
                         }}
             
             mypct_cln.update_one(filter=query,update=change)
@@ -170,8 +170,8 @@ def edit_content():
             return redirect(url_for('views.home'))
         
 
-    # show the form, it wasn't submitted
-    return render_template('edit_content.html',content_selected = user_content_data_sel)
+    print(user_content_dict)
+    return render_template('edit_content.html',content_selected = user_content_dict)
 
 @views.route('/sort_content')
 def sort_content():
@@ -221,36 +221,41 @@ def cancel_changes():
     print(f'\ncancel_changes\n')
     return redirect(url_for('views.home'))
 
-# TODO: Add delete content functionality
+
 @views.route('/delete_content')
 def delete_content():
     print(f'\ndelete_content\n')
-    return redirect(url_for('views.home'))
 
-@views.route('/delete_completed', methods=['POST'])
-def delete_completed():
     mypct_cln = mongo.cx.mypct.tracker
-    mypct_cln.delete_many({'complete' : True})
-    return redirect(url_for('views.home'))
 
-@views.route('/delete_all', methods=['POST'])
-def delete_all():
-    pass
+    # Get current content selected
+    content_index = session.get('user_selection')
+    selection_idx = int(content_index)-1
 
-@views.route('/complete_content/<oid>')
-def complete_content(oid):
-    mypct_cln = mongo.cx.mypct.tracker
-    content_item = mypct_cln.find_one({'_id': ObjectId(oid)})
-    content_item['new'] = True
+    # Get current User_Email selected
+    user_email = session.get('User_Email')
+    query = {'User_Email':user_email}
+    record = mypct_cln.find(query)
 
-    current_content_title = 'This Is A Title'
-    edited_content_title = 'Title Updated via Flask-completed'
+    # Get content from data retrieved
+    df = pd.DataFrame.from_records(record)
+    user_content_data = df['Content'][0]
 
-    query = {'_id':ObjectId(oid),'Content.Title':current_content_title}
-    change = {'$set':{'Content.$.Title':edited_content_title}}
+    # Use index of selected content to show content
+    user_content_data_sel = user_content_data[selection_idx]
+    current_content_title = user_content_data_sel['Title']
+
+
+    change = {'$pull':{'Content':{'Title': current_content_title}}}
     mypct_cln.update_one(filter=query,update=change)
-    #mypct_cln.update_one(content_item)
+
     return redirect(url_for('views.home'))
+
+
+@views.route('/delete_all')
+def delete_all():
+    print(f'\ndelete_all\n')
+    return redirect(url_for('views.home')) 
 
 
 @views.route('/about')
