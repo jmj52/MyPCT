@@ -1,54 +1,68 @@
 from flask import Blueprint, render_template, request, session, redirect, url_for
 from website import mongo
-# from werkzeug.security import generate_password_hash, check_password_hash
 from website.extensions import mongo
 
 auth = Blueprint('auth',__name__)
 
-
+# Login Page
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
-        user = mongo.cx.mypct.tracker.find_one({'User_Email' : email})
+        # gets email from user input
+        email = request.form.get('email') 
+        # gets password from user input
+        password = request.form.get('password') 
+        # finds if the user email exists in the database
+        user = mongo.cx.mypct.tracker.find_one({'User_Email' : email}) 
+        
+        # if the user email exists
         if user:
-            # if check_password_hash(user['User_Password'], password):
+            # if the password in the user email document matches the password the user entered 
             if user['User_Password'] == password:
+                # creates a session for the user
                 session['User_Email'] = email
                 session['Sort_Method'] = 'Unsorted'
+                # directions to the home page 
                 return redirect(url_for('views.home'))
             else:
-                print('Incorrect password, try again.')
+                return 'Incorrect password. Go back.'
         else:
-            print('Email does not exist.')
+            return 'Email does not exist. Go back.'
         
     return render_template('login.html')
 
-
+# Logout Page
 @auth.route('/logout')
 def logout():
+    # Ends the user session
     session.pop('User_Email', None)
     return redirect(url_for('auth.login'))
-    # return render_template('login.html')
 
+# Signup Page
 @auth.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
+        # retrieves the user's first and last name, email, and password
         firstName = request.form.get('firstName')
         lastName = request.form.get('lastName')
         email = request.form.get('email')
         password = request.form.get('password')
         
+        # checks to see if the user email is in the database
         existing_user = mongo.cx.mypct.tracker.find_one({'User_Email' : email})
         
-        if existing_user is None:
-            #hashed = generate_password_hash(password, method='sha256')
-            mongo.cx.mypct.tracker.insert_one({'First_Name': firstName, 'Last_Name': lastName, 'User_Email': email, 'User_Password': password})
-            session['User_Email'] = email
-            session['Sort_Method'] = 'Unsorted'
-            return redirect(url_for('views.home'))
+        regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
         
-        return 'That email already exists!'
-    
+        if len(password) < 3:
+            return "Password must be longer than 2 characters. Go back."
+        else:
+            # if the user email does not exist
+            if existing_user is None:
+                # creates the user in the database in a document
+                mongo.cx.mypct.tracker.insert_one({'First_Name': firstName, 'Last_Name': lastName, 'User_Email': email, 'User_Password': password})
+                # creates a session for the user
+                session['User_Email'] = email
+                session['Sort_Method'] = 'Unsorted'
+                return redirect(url_for('views.home'))
+
     return render_template('signup.html')
