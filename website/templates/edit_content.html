@@ -14,7 +14,7 @@
 			
 			<div class="row">
 				<div class="col-lg-4 col-lg-offset-4" id="content">
-					<h1>Edit Content</h1>
+					<h1>Edit Content</h1><h6><FONT COLOR="#FF0000">{{error_sts}}</FONT></h6>
 					<form action="{{ url_for('views.edit_content') }}" method="POST" role="form">
 						<ul class="list-group t20">
 							{% for k,v in content_selected.items() %}
